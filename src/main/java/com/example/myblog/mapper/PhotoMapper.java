@@ -1,0 +1,9 @@
+package com.example.myblog.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.myblog.model.Photo;
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface PhotoMapper extends BaseMapper<Photo> {
+}
