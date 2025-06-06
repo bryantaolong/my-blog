@@ -1,6 +1,6 @@
 spring:
   application:
-    name: Artificial-News
+    name: My-Blog
   servlet:
     multipart:
       max-file-size: 10MB
