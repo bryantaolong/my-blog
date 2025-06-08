@@ -15,9 +15,9 @@ INSERT INTO `article` (`id`, `title`, `content`, `author_id`,`author_name`, `cre
 -- 相册表 (photo)
 -- 注意：file_path 假设为相对路径，您的服务器需要将其映射到实际存储路径
 INSERT INTO `photo` (`id`, `name`, `description`, `file_path`, `file_type`, `file_size`, `author_id`, `author_name`, `create_time`, `update_time`) VALUES
-                                                                                                                                        (201, '新加坡美食 - 辣椒螃蟹', '在东海岸海鲜中心品尝的美味辣椒螃蟹。', 'user_1/chilli_crab.jpg', 'image/jpeg', 120480, 1, 'testuser', '2024-05-08 11:00:00', '2024-05-08 11:00:00'),
-                                                                                                                                        (202, '滨海湾花园夜景', '滨海湾花园的擎天大树在夜晚灯光璀璨。', 'user_3/gardens_by_bay.png', 'image/png', 350120, 3, 'newuser', '2024-05-09 18:00:00', '2024-05-09 18:00:00'),
-                                                                                                                                        (203, '我的开发环境', '我的笔记本电脑和外接显示器，编码进行时。', 'user_1/dev_setup.jpg', 'image/jpeg', 98765, 1, 'testuser', '2024-05-10 09:30:00', '2024-05-10 09:30:00');
+                                                                                                                                        (201, '新加坡美食 - 辣椒螃蟹', '在东海岸海鲜中心品尝的美味辣椒螃蟹。', '1/chilli_crab.png', 'image/png', 120480, 1, 'testuser', '2024-05-08 11:00:00', '2024-05-08 11:00:00'),
+                                                                                                                                        (202, '滨海湾花园夜景', '滨海湾花园的擎天大树在夜晚灯光璀璨。', '3/gardens_by_bay.png', 'image/png', 350120, 3, 'newuser', '2024-05-09 18:00:00', '2024-05-09 18:00:00'),
+                                                                                                                                        (203, '我的开发环境', '我的笔记本电脑和外接显示器，编码进行时。', '1/dev_setup.png', 'image/png', 98765, 1, 'testuser', '2024-05-10 09:30:00', '2024-05-10 09:30:00');
 
 -- 文章评论表 (article_comment)
 INSERT INTO `article_comment` (`id`, `article_id`, `content`, `author_id`, `author_name`, `create_time`, `update_time`) VALUES
