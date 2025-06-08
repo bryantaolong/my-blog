@@ -187,30 +187,36 @@ public class PhotoController {
             @RequestParam(value = "description", required = false) String description,
             @RequestParam("authorId") String authorId) {
         try {
+            // 验证参数
             if (file.isEmpty() || name == null || name.trim().isEmpty() || authorId == null || authorId.trim().isEmpty()) {
                 return BaseResponse.fail(HttpStatus.BAD_REQUEST.value(), "文件、名称和作者ID不能为空");
             }
 
-            // 根据实际的文件存储路径调整 subDirectory 的生成方式
-            // 如果您的文件存储在 uploads/1/, uploads/3/ 这样的目录下，则直接使用 authorId
-            // 如果您的文件存储在 uploads/user_1/, uploads/user_3/ 这样的目录下，则使用 "user_" + authorId
-            String subDirectory = authorId; // 假设 authorId 就是您希望的子目录名，例如 "1", "3"
-
-            String fileType = file.getContentType();
-            if (fileType != null && fileType.toLowerCase().contains("jepg")) {
-                fileType = fileType.replace("jepg", "jpeg");
+            // 验证文件类型是否为PNG
+            String contentType = file.getContentType();
+            if (contentType == null || !contentType.equalsIgnoreCase("image/png")) {
+                return BaseResponse.fail(HttpStatus.BAD_REQUEST.value(), "只支持PNG格式的图片");
             }
 
+            // 使用正斜杠作为路径分隔符
+            String subDirectory = authorId.replace("\\", "/");
+
+            // 存储文件
             String filePath = fileStorageService.storeFile(file, subDirectory);
 
+            // 确保路径使用正斜杠
+            filePath = filePath.replace("\\", "/");
+
+            // 创建图片记录
             Photo photo = new Photo();
             photo.setName(name);
             photo.setDescription(description);
             photo.setFilePath(filePath);
-            photo.setFileType(fileType);
+            photo.setFileType("image/png"); // 强制设置为image/png
             photo.setFileSize(file.getSize());
             photo.setAuthorId(authorId);
 
+            // 设置作者名称
             User author = userMapper.selectById(authorId);
             if (author != null) {
                 photo.setAuthorName(author.getUsername());
@@ -218,11 +224,13 @@ public class PhotoController {
                 photo.setAuthorName("未知用户");
             }
 
+            // 保存到数据库
             int inserted = photoMapper.insert(photo);
 
             if (inserted > 0) {
                 return BaseResponse.success(photo);
             } else {
+                // 回滚：删除已上传的文件
                 fileStorageService.deleteFile(filePath);
                 return BaseResponse.fail("图片信息保存到数据库失败");
             }

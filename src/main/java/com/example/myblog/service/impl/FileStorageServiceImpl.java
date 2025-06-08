@@ -16,7 +16,6 @@ public class FileStorageServiceImpl implements FileStorageService {
     @Override
     public String storeFile(MultipartFile file, String subDirectory) throws IOException {
         // 构建上传目录的绝对路径，包括子目录
-        // 例如：/path/to/your/project/uploads/user_1
         Path uploadPath = Paths.get(uploadDir, subDirectory).toAbsolutePath().normalize();
 
         // 如果目录不存在，则创建
@@ -26,11 +25,19 @@ public class FileStorageServiceImpl implements FileStorageService {
 
         // 获取原始文件名
         String originalFilename = file.getOriginalFilename();
-        String correctedFilename = originalFilename;
+        if (originalFilename == null || originalFilename.isEmpty()) {
+            throw new IOException("文件名不能为空");
+        }
 
-        // 检查并修正文件扩展名中的 .jepg 错误为 .jpeg
-        if (originalFilename != null && originalFilename.toLowerCase().endsWith(".jepg")) {
-            correctedFilename = originalFilename.substring(0, originalFilename.length() - 5) + ".jpeg";
+        // 确保文件名以.png结尾
+        String correctedFilename = originalFilename;
+        if (!correctedFilename.toLowerCase().endsWith(".png")) {
+            // 如果已经有其他扩展名，去掉后再添加.png
+            int lastDotIndex = correctedFilename.lastIndexOf('.');
+            if (lastDotIndex > 0) {
+                correctedFilename = correctedFilename.substring(0, lastDotIndex);
+            }
+            correctedFilename += ".png";
         }
 
         // 生成唯一的文件名，以时间戳开头，加上修正后的原始文件名
@@ -42,7 +49,6 @@ public class FileStorageServiceImpl implements FileStorageService {
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         // 返回文件在 uploads 目录下的相对路径
-        // 例如：user_1/1748951631901_Dying Light.jpeg
         return Paths.get(subDirectory, fileName).toString();
     }
 
